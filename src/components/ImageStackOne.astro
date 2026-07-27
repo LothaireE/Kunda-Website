@@ -1,0 +1,249 @@
+---
+// Alternative 1: apparition avec mouvement, rotation et mise à l'échelle.
+const images = [
+    {
+        src: "/images/landing/stack-01.jpg",
+        alt: "Textiles artisanaux et chaises colorées",
+        x: "-11%",
+        y: "-5%",
+        rotation: "-5deg",
+        scale: "0.96",
+    },
+    {
+        src: "/images/landing/stack-02.jpg",
+        alt: "Portrait dans un marché",
+        x: "10%",
+        y: "-7%",
+        rotation: "4deg",
+        scale: "0.98",
+    },
+    {
+        src: "/images/landing/stack-03.jpg",
+        alt: "Scène de rue devant un salon",
+        x: "-8%",
+        y: "6%",
+        rotation: "-3deg",
+        scale: "1",
+    },
+    {
+        src: "/images/landing/stack-04.jpg",
+        alt: "Artistes se préparant devant des miroirs",
+        x: "9%",
+        y: "5%",
+        rotation: "5deg",
+        scale: "0.97",
+    },
+    {
+        src: "/images/landing/stack-05.jpg",
+        alt: "Table de rue et circulation urbaine",
+        x: "-5%",
+        y: "-3%",
+        rotation: "-2deg",
+        scale: "0.99",
+    },
+    {
+        src: "/images/landing/stack-06.jpg",
+        alt: "Vendeuse sur un marché",
+        x: "5%",
+        y: "2%",
+        rotation: "3deg",
+        scale: "1",
+    },
+];
+---
+
+<div class="image-intro" aria-label="Introduction photographique">
+    <div class="image-stack">
+        {
+            images.map((image, index) => (
+                <figure
+                    class="stack-card"
+                    style={{
+                        "--card-index": index,
+                        "--card-x": image.x,
+                        "--card-y": image.y,
+                        "--card-rotation": image.rotation,
+                        "--card-scale": image.scale,
+                    }}
+                >
+                    <img
+                        src={image.src}
+                        alt={image.alt}
+                        width="1050"
+                        height="1400"
+                        loading="eager"
+                        decoding="async"
+                    />
+                </figure>
+            ))
+        }
+    </div>
+</div>
+
+<script>
+    const INTRO_DURATION = 2922;
+    const CONTACT_TRANSITION_DURATION = 450;
+
+    const intro = document.querySelector<HTMLElement>(".image-intro");
+    const cards = [...document.querySelectorAll<HTMLElement>(".stack-card")];
+    const images = [
+        ...document.querySelectorAll<HTMLImageElement>(".stack-card img"),
+    ];
+
+    function revealContact() {
+        intro?.classList.add("is-leaving");
+        document.dispatchEvent(new CustomEvent("landing:reveal-contact"));
+    }
+
+    function completeIntro() {
+        if (intro) {
+            intro.hidden = true;
+        }
+
+        document.documentElement.dataset.landingIntroComplete = "true";
+        document.dispatchEvent(new CustomEvent("landing:intro-complete"));
+    }
+
+    async function prepareImages() {
+        await Promise.all(
+            images.map(async (image) => {
+                if (image.complete) return;
+
+                await new Promise<void>((resolve) => {
+                    image.addEventListener("load", () => resolve(), {
+                        once: true,
+                    });
+                    image.addEventListener("error", () => resolve(), {
+                        once: true,
+                    });
+                });
+            }),
+        );
+    }
+
+    async function startIntro() {
+        if (!intro || cards.length === 0) {
+            revealContact();
+            completeIntro();
+            return;
+        }
+
+        const reducedMotion = window.matchMedia(
+            "(prefers-reduced-motion: reduce)",
+        ).matches;
+
+        if (reducedMotion) {
+            revealContact();
+            completeIntro();
+            return;
+        }
+
+        await prepareImages();
+
+        requestAnimationFrame(() => {
+            intro.classList.add("is-playing");
+        });
+
+        window.setTimeout(
+            revealContact,
+            INTRO_DURATION - CONTACT_TRANSITION_DURATION,
+        );
+        window.setTimeout(completeIntro, INTRO_DURATION);
+    }
+
+    startIntro();
+</script>
+
+<style>
+    .image-intro {
+        position: fixed;
+        inset: 0;
+        z-index: 1;
+
+        display: grid;
+        place-items: center;
+
+        overflow: hidden;
+        background: #fff;
+        opacity: 1;
+
+        transition: opacity 450ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .image-intro.is-leaving {
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .image-stack {
+        position: relative;
+        width: min(28vw, calc(64svh * 0.76), 380px);
+        aspect-ratio: 0.76;
+    }
+
+    .stack-card {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        z-index: calc(var(--card-index) + 1);
+
+        width: 100%;
+        height: 100%;
+        margin: 0;
+
+        overflow: hidden;
+        background: #fff;
+        box-shadow: 0 16px 45px rgb(20 25 35 / 13%);
+        opacity: 0;
+
+        transform: translate(
+                calc(-50% + var(--card-x)),
+                calc(-50% + var(--card-y) + 22px)
+            )
+            rotate(0deg) scale(0.94);
+
+        transition:
+            opacity 280ms ease-out,
+            transform 520ms cubic-bezier(0.22, 1, 0.36, 1);
+        transition-delay: calc(120ms + var(--card-index) * 350ms);
+        will-change: opacity, transform;
+    }
+
+    .image-intro.is-playing .stack-card {
+        opacity: 1;
+        transform: translate(
+            calc(-50% + var(--card-x)),
+            calc(-50% + var(--card-y))
+        );
+        rotate(var(--card-rotation)) scale(var(--card-scale));
+    }
+
+    .stack-card img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    @media (max-width: 768px) {
+        .image-stack {
+            width: min(68vw, calc(62svh * 0.76), 280px);
+        }
+
+        .stack-card {
+            box-shadow: 0 12px 34px rgb(20 25 35 / 12%);
+        }
+    }
+
+    @media (max-height: 560px) and (orientation: landscape) {
+        .image-stack {
+            width: min(30vw, calc(72svh * 0.76));
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .image-intro {
+            display: none;
+        }
+    }
+</style>
