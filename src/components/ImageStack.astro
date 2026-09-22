@@ -1,41 +1,100 @@
 ---
-// Pile photographique principale avec apparition par fondu uniquement.
 const images = [
     {
-        src: "/images/landing/stack-01.jpg",
-        alt: "Textiles artisanaux et chaises colorées",
-        left: "20%",
-        top: "26%",
-    },
-    {
-        src: "/images/landing/stack-02.jpg",
-        alt: "Portrait dans un marché",
-        left: "42%",
-        top: "45%",
-    },
-    {
-        src: "/images/landing/stack-03.jpg",
-        alt: "Scène de rue devant un salon",
-        left: "72%",
+        src: "/images/landing/stack-01.jpeg",
+        alt: "Bac de vaisselle colorée sur un marché",
+        left: "15%",
         top: "24%",
+        mobileLeft: "18%",
+        mobileTop: "18%",
     },
     {
-        src: "/images/landing/stack-04.jpg",
-        alt: "Artistes se préparant devant des miroirs",
-        left: "28%",
-        top: "76%",
+        src: "/images/landing/stack-02.jpeg",
+        alt: "Portrait dans un marché",
+        left: "38%",
+        top: "42%",
+        mobileLeft: "68%",
+        mobileTop: "28%",
     },
     {
-        src: "/images/landing/stack-05.jpg",
-        alt: "Table de rue et circulation urbaine",
+        src: "/images/landing/stack-03.jpeg",
+        alt: "Scène de rue devant un salon",
         left: "76%",
-        top: "72%",
+        top: "20%",
+        mobileLeft: "30%",
+        mobileTop: "42%",
     },
     {
-        src: "/images/landing/stack-06.jpg",
+        src: "/images/landing/stack-04.jpeg",
+        alt: "Artistes se préparant devant des miroirs",
+        left: "23%",
+        top: "76%",
+        mobileLeft: "78%",
+        mobileTop: "52%",
+    },
+    {
+        src: "/images/landing/stack-05.jpeg",
+        alt: "Table de rue et circulation urbaine",
+        left: "82%",
+        top: "73%",
+        mobileLeft: "20%",
+        mobileTop: "67%",
+    },
+    {
+        src: "/images/landing/stack-06.jpeg",
         alt: "Vendeuse sur un marché",
-        left: "53%",
-        top: "58%",
+        left: "55%",
+        top: "62%",
+        mobileLeft: "67%",
+        mobileTop: "78%",
+    },
+    {
+        src: "/images/landing/stack-07.jpeg",
+        alt: "Tabourets et table de rue",
+        left: "8%",
+        top: "52%",
+        mobileLeft: "83%",
+        mobileTop: "16%",
+    },
+    {
+        src: "/images/landing/stack-08.jpeg",
+        alt: "Cliente au stand de piments sur un marché",
+        left: "91%",
+        top: "45%",
+        mobileLeft: "14%",
+        mobileTop: "34%",
+    },
+    {
+        src: "/images/landing/stack-09.jpeg",
+        alt: "Vendeur de marrons sur un marché",
+        left: "65%",
+        top: "84%",
+        mobileLeft: "82%",
+        mobileTop: "66%",
+    },
+    {
+        src: "/images/landing/stack-10.jpeg",
+        alt: "Cliente sur un marché de nuit",
+        left: "42%",
+        top: "14%",
+        mobileLeft: "50%",
+        mobileTop: "14%",
+    },
+    {
+        src: "/images/landing/stack-11.jpeg",
+        alt: "Deux hommes jouant au Xiangqi sur le trottoir",
+        left: "63%",
+        top: "40%",
+        mobileLeft: "45%",
+        mobileTop: "54%",
+    },
+    {
+        src: "/images/landing/stack-12.jpeg",
+        alt: "Femmes assises dans la salle de prière de la mosquée Putra",
+        left: "38%",
+        top: "72%",
+        mobileLeft: "42%",
+        mobileTop: "84%",
     },
 ];
 ---
@@ -50,6 +109,8 @@ const images = [
                         "--card-index": index,
                         "--card-left": image.left,
                         "--card-top": image.top,
+                        "--card-mobile-left": image.mobileLeft,
+                        "--card-mobile-top": image.mobileTop,
                     }}
                 >
                     <img
@@ -67,7 +128,7 @@ const images = [
 </div>
 
 <script>
-    const INTRO_DURATION = 2522; //3222;
+    const INTRO_DURATION = 3222; // 2522;
     const CONTACT_TRANSITION_DURATION = 450;
 
     const intro = document.querySelector<HTMLElement>(".image-intro");
@@ -111,6 +172,23 @@ const images = [
         );
     }
 
+    function randomizeRevealOrder() {
+        const shuffledCards = [...cards];
+
+        for (let index = shuffledCards.length - 1; index > 0; index--) {
+            const randomIndex = Math.floor(Math.random() * (index + 1));
+
+            [shuffledCards[index], shuffledCards[randomIndex]] = [
+                shuffledCards[randomIndex],
+                shuffledCards[index],
+            ];
+        }
+
+        shuffledCards.forEach((card, revealIndex) => {
+            card.style.setProperty("--reveal-index", `${revealIndex}`);
+        });
+    }
+
     async function startIntro() {
         if (!intro || cards.length === 0) {
             revealContact();
@@ -130,6 +208,7 @@ const images = [
         }
 
         await prepareImages();
+        randomizeRevealOrder();
 
         requestAnimationFrame(() => {
             intro.classList.add("is-playing");
@@ -190,7 +269,7 @@ const images = [
         transform: translate(-50%, -50%);
 
         transition: opacity 120ms linear;
-        transition-delay: calc(120ms + var(--card-index) * 300ms);
+        transition-delay: calc(100ms + var(--reveal-index, 0) * 150ms);
         will-change: opacity;
     }
 
@@ -212,6 +291,8 @@ const images = [
         }
 
         .stack-card {
+            top: var(--card-mobile-top);
+            left: var(--card-mobile-left);
             width: min(64vw, calc(60svh * 0.76), 280px);
             box-shadow: 0 14px 38px rgb(20 25 35 / 13%);
         }

@@ -1,0 +1,42 @@
+.logo-grid {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  overflow: hidden;
+}
+
+@media (max-width: 1100px) {
+  .logo-grid {
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: repeat(6, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .logo-grid {
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(7, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .logo-grid {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(8, 1fr);
+  }
+}
+
+.logo-cell {
+  opacity: 0;
+  transform: scale(0.85);
+}
+
+.logo-cell.is-visible {
+  opacity: 1;
+  transform: scale(1);
+  transition:
+    opacity 600ms ease,
+    transform 800ms cubic-bezier(.2, .8, .2, 1);
+}
