@@ -209,9 +209,12 @@ const images = [
 
         await prepareImages();
         randomizeRevealOrder();
+        intro.classList.add("is-ready");
 
         requestAnimationFrame(() => {
-            intro.classList.add("is-playing");
+            requestAnimationFrame(() => {
+                intro.classList.add("is-playing");
+            });
         });
 
         window.setTimeout(
@@ -262,9 +265,10 @@ const images = [
         margin: 0;
 
         overflow: hidden;
-        background: #fff;
+        background: transparent;
         box-shadow: 0 20px 54px rgb(20 25 35 / 14%);
         opacity: 0;
+        visibility: hidden;
 
         transform: translate(-50%, -50%);
 
@@ -275,6 +279,10 @@ const images = [
 
     .image-intro.is-playing .stack-card {
         opacity: 1;
+    }
+
+    .image-intro.is-ready .stack-card {
+        visibility: visible;
     }
 
     .stack-card img {
