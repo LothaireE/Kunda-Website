@@ -2,7 +2,6 @@
 import NewsletterSubscription from "./NewsletterSubscription.astro";
 
 const email = "kunda.contact@gmail.com"; // "rokhia@kunda-store.com";
-const newsletterUrl = "https://newsletter.example.com";
 ---
 
 <main class="contact-screen" aria-hidden="true">
@@ -27,7 +26,7 @@ const newsletterUrl = "https://newsletter.example.com";
                     id="newsletter-panel"
                     aria-hidden="true"
                 >
-                    <NewsletterSubscription action={newsletterUrl} />
+                    <NewsletterSubscription />
                 </div>
             </div>
         </div>
@@ -197,6 +196,10 @@ const newsletterUrl = "https://newsletter.example.com";
 
         width: min(90vw, 48rem);
         padding-top: clamp(1.25rem, 3vw, 2rem);
+        max-height: 48svh;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        background: #fff;
 
         opacity: 0;
         visibility: hidden;

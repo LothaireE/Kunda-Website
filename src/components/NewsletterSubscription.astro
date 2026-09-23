@@ -1,12 +1,4 @@
----
-interface Props {
-    action: string;
-}
-
-const { action } = Astro.props;
----
-
-<section class="newsletter" aria-labelledby="newsletter-title">
+<section class="newsletter" aria-label="Newsletter subscription">
     <div class="newsletter-copy">
         <!-- <h2 id="newsletter-title">Welcome to KÜNDA!</h2> -->
         <p>
@@ -15,7 +7,28 @@ const { action } = Astro.props;
         </p>
     </div>
 
-    <form class="newsletter-form" action={action} method="post">
+    <form class="newsletter-form" action="/api/newsletter" method="post">
+        <div class="name-fields">
+            <label class="sr-only" for="newsletter-first-name">First name</label
+            >
+            <input
+                id="newsletter-first-name"
+                name="firstName"
+                autocomplete="given-name"
+                placeholder="First name"
+                maxlength="100"
+                required
+            />
+            <label class="sr-only" for="newsletter-last-name">Last name</label>
+            <input
+                id="newsletter-last-name"
+                name="lastName"
+                autocomplete="family-name"
+                placeholder="Last name"
+                maxlength="100"
+                required
+            />
+        </div>
         <label class="sr-only" for="newsletter-email">Email address</label>
         <input
             id="newsletter-email"
@@ -24,14 +37,86 @@ const { action } = Astro.props;
             inputmode="email"
             autocomplete="email"
             placeholder="Email address"
+            maxlength="254"
             required
         />
 
-        <button type="submit">Sign up</button>
+        <button type="submit" disabled>Sign up</button>
+        <div class="sr-only" aria-hidden="true">
+            <label for="newsletter-website">Leave this field empty</label>
+            <input
+                id="newsletter-website"
+                name="website"
+                tabindex="-1"
+                autocomplete="off"
+            />
+        </div>
+        <label class="consent">
+            <input type="checkbox" name="consent" required />
+            <span
+                >I would like to receive KÜNDA’s monthly newsletter. I can
+                unsubscribe at any time.</span
+            >
+        </label>
     </form>
 
+    <p
+        class="newsletter-status"
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+    >
+    </p>
+    <noscript>Please enable JavaScript to sign up for the newsletter.</noscript>
     <p class="privacy-note">We respect your privacy.</p>
 </section>
+
+<script>
+    const form = document.querySelector<HTMLFormElement>(".newsletter-form");
+    const button = form?.querySelector<HTMLButtonElement>(
+        'button[type="submit"]',
+    );
+    const status = document.querySelector<HTMLElement>(".newsletter-status");
+    if (form && button && status) {
+        button.disabled = false;
+        form.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            if (button.disabled || !form.reportValidity()) return;
+            const fields = new FormData(form);
+            button.disabled = true;
+            button.textContent = "Signing up…";
+            form.setAttribute("aria-busy", "true");
+            status.textContent = "";
+            try {
+                const response = await fetch(form.action, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        email: fields.get("email"),
+                        firstName: fields.get("firstName"),
+                        lastName: fields.get("lastName"),
+                        consent: fields.get("consent") === "on",
+                        website: fields.get("website"),
+                    }),
+                    signal: AbortSignal.timeout(15_000),
+                });
+                const result = await response.json();
+                status.textContent =
+                    typeof result.message === "string"
+                        ? result.message
+                        : "Sign-up is temporarily unavailable. Please try again later.";
+                if (response.ok) form.reset();
+            } catch {
+                status.textContent =
+                    "We could not connect. Please try again in a moment.";
+            } finally {
+                button.disabled = false;
+                button.textContent = "Sign up";
+                form.removeAttribute("aria-busy");
+            }
+        });
+    }
+</script>
 
 <style>
     .newsletter {
@@ -75,6 +160,53 @@ const { action } = Astro.props;
         width: 100%;
         border: 1px solid rgb(1 21 208 / 35%);
         background: #fff;
+    }
+
+    .name-fields {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-column: 1 / -1;
+        border-bottom: 1px solid rgb(1 21 208 / 35%);
+    }
+
+    .name-fields input + label + input {
+        border-left: 1px solid rgb(1 21 208 / 35%);
+    }
+
+    .consent {
+        grid-column: 1 / -1;
+        display: flex;
+        align-items: start;
+        gap: 0.65rem;
+        padding: 0.85rem;
+        border-top: 1px solid rgb(1 21 208 / 35%);
+        text-align: left;
+        font-size: 0.8rem;
+        line-height: 1.4;
+        letter-spacing: normal;
+        text-transform: none;
+    }
+
+    .consent input {
+        min-height: 0;
+        flex-shrink: 0;
+        margin: 0.15rem 0 0;
+        accent-color: #0115d0;
+    }
+
+    .newsletter-status {
+        font-size: 0.9rem;
+        line-height: 1.4;
+        letter-spacing: normal;
+        text-transform: none;
+    }
+
+    .newsletter-status:empty {
+        display: none;
+    }
+    button:disabled {
+        opacity: 0.6;
+        cursor: wait;
     }
 
     input,

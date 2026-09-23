@@ -1,43 +1,43 @@
-# Astro Starter Kit: Minimal
+# KÜNDA
+
+Astro website with a newsletter form backed by the Squarespace Contacts API.
+
+## Setup
 
 ```sh
-npm create astro@latest -- --template minimal
+npm install
+cp .env.example .env
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+Set `SQUARESPACE_API_KEY` in `.env` using a key with **Contacts: Read and Write** permission. Your Squarespace plan must support this access. Keep the key server-side; `.env` is ignored by Git. Restart the server after changing it.
 
-## 🚀 Project Structure
+## Development
 
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
+```sh
+npm run dev -- --background
+npm run astro -- dev status
+npm run astro -- dev logs
+npm run astro -- dev stop
+npm test
+npm run build
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+Tests mock Squarespace and create no real contacts.
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+## Newsletter
 
-Any static assets, like images, can be placed in the `public/` directory.
+`POST /api/newsletter` validates submissions and creates Squarespace contacts with marketing consent. Existing subscribers receive a success message; unsubscribed contacts are never automatically reactivated.
 
-## 🧞 Commands
+This does not submit the existing Squarespace newsletter block, select a named mailing list, or send a confirmation email. Before launch, verify a real signup and campaign targeting in Squarespace, and configure rate limiting for the endpoint.
 
-All commands are run from the root of the project, from a terminal:
+## Deployment
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+The Node adapter serves the API while the homepage is prerendered:
 
-## 👀 Want to learn more?
+```sh
+node --env-file=.env dist/server/entry.mjs
+```
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+Static-only hosting is insufficient. Netlify or Cloudflare deployments require the matching Astro adapter and the API key configured as a server environment variable.
+
+[Squarespace Contacts API](https://developers.squarespace.com/commerce-apis/contacts) · [API permissions](https://developers.squarespace.com/commerce-apis/authentication-and-permissions)
