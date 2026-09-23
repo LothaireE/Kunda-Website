@@ -58,7 +58,7 @@ const images = [
     },
     {
         src: "/images/landing/stack-08.jpeg",
-        alt: "Cliente au stand de piments sur un marché",
+        alt: "Femmes assises dans la salle de prière de la mosquée Putra",
         left: "91%",
         top: "45%",
         mobileLeft: "14%",
@@ -90,7 +90,7 @@ const images = [
     },
     {
         src: "/images/landing/stack-12.jpeg",
-        alt: "Femmes assises dans la salle de prière de la mosquée Putra",
+        alt: "Cliente au stand de piments sur un marché",
         left: "38%",
         top: "72%",
         mobileLeft: "42%",
@@ -102,11 +102,10 @@ const images = [
 <div class="image-intro" aria-label="Introduction photographique">
     <div class="image-stack">
         {
-            images.map((image, index) => (
+            images.map((image) => (
                 <figure
                     class="stack-card"
                     style={{
-                        "--card-index": index,
                         "--card-left": image.left,
                         "--card-top": image.top,
                         "--card-mobile-left": image.mobileLeft,
@@ -258,7 +257,7 @@ const images = [
         position: absolute;
         top: var(--card-top);
         left: var(--card-left);
-        z-index: calc(var(--card-index) + 1);
+        z-index: calc(var(--reveal-index, 0) + 1);
 
         width: min(36vw, calc(74svh * 0.76), 510px);
         aspect-ratio: 0.76;
