@@ -1,6 +1,7 @@
 ---
 import ImageStack from "../components/ImageStack.astro";
 import CenterContent from "../components/CenterContent.astro";
+import SiteNavigation from "../components/SiteNavigation.astro";
 ---
 
 <!doctype html>
@@ -17,12 +18,13 @@ import CenterContent from "../components/CenterContent.astro";
         <link
             rel="icon"
             type="image/png"
-            href="/public/logos/kunda-logo-01.png"
+            href="/logos/kunda-logo-01.png"
         />
         <title>KÜNDA</title>
     </head>
 
     <body>
+        <SiteNavigation />
         <ImageStack />
         <CenterContent />
     </body>
