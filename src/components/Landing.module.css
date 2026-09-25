@@ -1,0 +1,237 @@
+.image-intro {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+
+  display: grid;
+  place-items: center;
+
+  overflow: hidden;
+  background: #fff;
+  opacity: 1;
+
+  transition: opacity 450ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.image-intro.is-leaving {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.image-stack {
+  position: relative;
+  width: 90vw;
+  height: 88svh;
+}
+
+.stack-card {
+  position: absolute;
+  top: var(--card-top);
+  left: var(--card-left);
+  z-index: calc(var(--reveal-index, 0) + 1);
+
+  width: min(36vw, calc(74svh * 0.76), 510px);
+  aspect-ratio: 0.76;
+  margin: 0;
+
+  overflow: hidden;
+  background: transparent;
+  box-shadow: 0 20px 54px rgb(20 25 35 / 14%);
+  opacity: 0;
+  visibility: hidden;
+
+  transform: translate(-50%, -50%);
+
+  transition: opacity 120ms linear;
+  transition-delay: calc(100ms + var(--reveal-index, 0) * 150ms);
+  will-change: opacity;
+}
+
+.image-intro.is-playing .stack-card {
+  opacity: 1;
+}
+
+.image-intro.is-ready .stack-card {
+  visibility: visible;
+}
+
+.stack-card img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@media (max-width: 768px) {
+  .image-stack {
+    width: 100vw;
+    height: 90svh;
+  }
+
+  .stack-card {
+    top: var(--card-mobile-top);
+    left: var(--card-mobile-left);
+    width: min(64vw, calc(60svh * 0.76), 280px);
+    box-shadow: 0 14px 38px rgb(20 25 35 / 13%);
+  }
+}
+
+@media (max-height: 560px) and (orientation: landscape) {
+  .stack-card {
+    width: min(28vw, calc(82svh * 0.76));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .image-intro {
+    display: none;
+  }
+}
+
+.contact-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+
+  display: grid;
+  place-items: center;
+
+  min-height: 100vh;
+  min-height: 100svh;
+  padding: clamp(1.5rem, 4vw, 4rem);
+
+  /* color:  #0e4fa8; */
+  color: #0115d0;
+  background: #fff;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 450ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 450ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.contact-screen.is-visible {
+  z-index: 2;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.contact-content {
+  display: grid;
+  justify-items: center;
+  gap: clamp(1.5rem, 4vw, 2.75rem);
+  width: min(100%, 52rem);
+  text-align: center;
+}
+
+.eyebrow {
+  margin: 0;
+  /* color: rgb(14 79 168 / 58%); */
+  color: rgb(1 21 208 / 58%);
+  font-size: clamp(0.7rem, 1vw, 0.82rem);
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.contact-links {
+  display: grid;
+  justify-items: center;
+  gap: 0.35em;
+  font-size: clamp(1.45rem, 3.2vw, 3.4rem);
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+}
+
+.newsletter-reveal {
+  position: relative;
+}
+
+.email-link {
+  /* color: #0e4fa8; */
+  color: #0115d0;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+
+.newsletter-trigger {
+  padding: 0;
+  border: 0;
+  color: #0115d0;
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
+  line-height: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+}
+
+.newsletter-panel {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  z-index: 3;
+
+  width: min(90vw, 48rem);
+  padding-top: clamp(1.25rem, 3vw, 2rem);
+  max-height: 48svh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: #fff;
+
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translate(-50%, 0.6rem);
+
+  transition:
+    opacity 160ms ease,
+    transform 200ms cubic-bezier(0.22, 1, 0.36, 1),
+    visibility 0s linear 200ms;
+}
+
+.newsletter-reveal.is-open .newsletter-panel {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translate(-50%, 0);
+
+  transition:
+    opacity 160ms ease,
+    transform 200ms cubic-bezier(0.22, 1, 0.36, 1),
+    visibility 0s;
+}
+
+.email-link:hover,
+.email-link:focus-visible,
+.newsletter-trigger:hover,
+.newsletter-trigger:focus-visible,
+.newsletter-trigger[aria-expanded="true"] {
+  text-decoration: underline;
+  text-decoration-thickness: 0.06em;
+  text-underline-offset: 0.12em;
+}
+
+@media (max-width: 520px) {
+  .contact-links {
+    font-size: clamp(1.25rem, 6.2vw, 1.8rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .contact-screen {
+    z-index: 2;
+    opacity: 1;
+    pointer-events: auto;
+    transition: none;
+  }
+}
+.landing .contact-screen {
+  width: 100%;
+  margin: 0;
+}
+.landing .image-intro[hidden] {
+  display: none;
+}

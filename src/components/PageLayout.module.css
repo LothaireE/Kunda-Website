@@ -1,0 +1,32 @@
+.page {
+  width: min(100%, 64rem);
+  margin: 0 auto;
+  padding: clamp(3rem, 10vw, 8rem) clamp(1.25rem, 4vw, 4rem) 4rem;
+}
+.page h1 {
+  margin: 0 0 clamp(2rem, 5vw, 4rem);
+  font-size: clamp(3rem, 9vw, 7rem);
+  line-height: 0.95;
+  font-weight: 600;
+  letter-spacing: -0.06em;
+  text-transform: uppercase;
+}
+.content {
+  display: grid;
+  gap: 2rem;
+}
+.content > p {
+  max-width: 40rem;
+  margin: 0;
+  font-size: clamp(1.25rem, 2.8vw, 2rem);
+  line-height: 1.4;
+  letter-spacing: -0.025em;
+}
+.content > a {
+  width: fit-content;
+  color: inherit;
+  font-size: clamp(1rem, 2.8vw, 1.5rem);
+  text-underline-offset: 0.2em;
+  overflow-wrap: anywhere;
+  max-width: 100%;
+}
