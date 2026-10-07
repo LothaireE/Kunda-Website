@@ -1,9 +1,6 @@
 node_modules
 .next
-dist
-.astro
 package-lock.json
 next-env.d.ts
-README copy.md
 playwright-report
 test-results

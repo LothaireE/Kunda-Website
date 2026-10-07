@@ -9,8 +9,6 @@ export default defineConfig([
   { rules: { "react-hooks/set-state-in-effect": "off" } },
   globalIgnores([
     ".next/**",
-    "dist/**",
-    ".astro/**",
     "next-env.d.ts",
     "playwright-report/**",
     "test-results/**",
