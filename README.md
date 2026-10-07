@@ -55,9 +55,21 @@ Next.js and React versions are pinned; check Payload's peer dependencies before 
 marketing consent. Existing subscribers receive a success message; unsubscribed
 contacts are never automatically reactivated.
 
-This does not select a named mailing list or send a confirmation email. Before
-launch, verify a real signup and campaign targeting in Squarespace, and configure
-rate limiting for the endpoint.
+To configure it, create a key in Squarespace under **Settings → Advanced → Developer
+API Keys** with **Contacts: Read and Write** permission (the plan must include API
+access), then set `SQUARESPACE_API_KEY` in `.env`.
+
+This creates a contact with marketing consent; it is not a submission of a
+Squarespace newsletter block. It does not select a named Email Campaigns list or
+send a confirmation or welcome email, and Squarespace labels API-created contacts as
+"inorganic". Before launch, sign up with a controlled address and check that the
+contact is subscribed and reachable by the intended campaign, and configure rate
+limiting for the endpoint.
+
+References:
+[Contacts API](https://developers.squarespace.com/commerce-apis/contacts),
+[Contacts and marketing consent](https://developers.squarespace.com/commerce-apis/contacts-overview),
+[Authentication and permissions](https://developers.squarespace.com/commerce-apis/authentication-and-permissions).
 
 ## Deployment
 
@@ -69,10 +81,7 @@ npm start
 Production requires a Node.js runtime and `SQUARESPACE_API_KEY` in the hosting
 provider's server environment. Static-only hosting is insufficient for the API.
 
-## Migration scope
+## Roadmap
 
-The Astro baseline is saved at commit `3fc0918` on
-`codex/add-studio-newsletter-about-contact`. Migration work is on `codex/migrate-nextjs`.
-The public site is migrated; Payload, PostgreSQL, S3 media storage and Lexical are a
-separate next phase and are **not installed or connected yet**. No production
-hosting or real subscriber data has been changed.
+The public site was migrated from Astro. Payload CMS, PostgreSQL and media storage
+are the next phase and are **not installed or connected yet**.
