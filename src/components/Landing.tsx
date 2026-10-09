@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
+import Image from "next/image";
 import { ImageStackContent } from "@/data/ImageStackContent";
 import SiteNavigation from "./SiteNavigation";
 import NewsletterSubscription from "./NewsletterSubscription";
@@ -9,6 +10,8 @@ const cx = (...names: (string | false)[]) =>
     .filter(Boolean)
     .map((name) => styles[name as string])
     .join(" ");
+// Start the intro even if some photos are still loading on a slow connection.
+const MAX_IMAGE_WAIT_MS = 2500;
 export default function Landing() {
   const intro = useRef<HTMLDivElement>(null);
   const reveal = useRef<HTMLDivElement>(null);
@@ -29,7 +32,7 @@ export default function Landing() {
         return;
       }
       const images = Array.from(intro.current?.querySelectorAll("img") ?? []);
-      await Promise.all(
+      const imagesReady = Promise.all(
         images.map(async (image) => {
           if (!image.complete)
             await new Promise<void>((resolve) => {
@@ -48,6 +51,12 @@ export default function Landing() {
           if (image.naturalWidth) await image.decode().catch(() => undefined);
         }),
       );
+      await Promise.race([
+        imagesReady,
+        new Promise<void>((resolve) =>
+          timers.push(setTimeout(resolve, MAX_IMAGE_WAIT_MS)),
+        ),
+      ]);
       if (cancelled) return;
       const cards = Array.from(
         intro.current?.querySelectorAll<HTMLElement>("figure") ?? [],
@@ -116,7 +125,7 @@ export default function Landing() {
         <div className={styles["image-stack"]}>
           {ImageStackContent.map((image) => (
             <figure
-              key={image.src}
+              key={image.src.src}
               className={styles["stack-card"]}
               style={
                 {
@@ -127,15 +136,13 @@ export default function Landing() {
                 } as CSSProperties
               }
             >
-              {/* Preserve the original eager-loaded photo mosaic during migration. */}
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              {/* Lazy so reduced-motion visitors, whose intro is display: none, never download the photos. */}
+              <Image
                 src={image.src}
                 alt={image.alt}
-                width={1050}
-                height={1400}
-                loading="eager"
-                decoding="async"
+                sizes="(max-width: 768px) 280px, 510px"
+                placeholder="blur"
+                loading="lazy"
               />
             </figure>
           ))}

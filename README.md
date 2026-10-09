@@ -46,7 +46,8 @@ GitHub Actions runs these checks on every pull request and on pushes to `main`
 - `src/app/api/newsletter/route.ts`: server-only subscription endpoint.
 - `src/components`: React components and scoped CSS Modules, preserving Astro styles.
 - `src/server/newsletter.ts`: framework-independent validation and Squarespace logic.
-- `public`: original photos and logos.
+- `src/assets/images`: homepage photos, imported statically so `next/image` serves resized AVIF/WebP versions. Keep sources around 1400 px wide.
+- `public`: logos.
 
 Tailwind utilities are available. Preflight is intentionally omitted so its reset
 cannot alter the migrated design. Existing components retain CSS Modules.
