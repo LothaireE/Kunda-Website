@@ -6,7 +6,7 @@ still uses the Squarespace Contacts API.
 
 ## Setup
 
-Use Node.js 22.12 or newer.
+Use Node.js 22.12 or newer (`.nvmrc` pins the major version used in CI).
 
 ```sh
 npm ci
@@ -35,6 +35,9 @@ server subscription tests with Node's test runner. All external API calls are mo
 Playwright tests use a production server on port 4322 and cover desktop/mobile
 navigation, intro visibility, reduced motion, mocked signup and API validation.
 They never create real subscribers.
+
+GitHub Actions runs these checks on every pull request and on pushes to `main`
+(`.github/workflows/ci.yml`).
 
 ## Structure
 
